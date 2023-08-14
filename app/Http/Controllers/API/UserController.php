@@ -1,0 +1,255 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Helpers\ResponseFormatter;
+use Exception;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Fortify\Rules\Password;
+use App\Mail\OtpMail;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\UploadedFile;
+
+
+class UserController extends Controller
+{
+    function generateOtpCode()
+    {
+        $previousOtpCode = session('previous_otp_code'); // Retrieve the previously generated OTP code from session
+
+        do {
+            $otpCode = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT); // Generate a 4-digit OTP code
+        } while ($otpCode === $previousOtpCode); // Repeat generation if the new code is the same as the previous one
+
+        session(['previous_otp_code' => $otpCode]); // Store the newly generated OTP code in session
+
+        return $otpCode;
+    }
+
+    public function register(Request $request)
+    {
+        try {
+            // Start the database transaction
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:100'],
+                'email' => ['required', 'string', 'max:255', 'email', 'unique:users'],
+                'role' => ['required', 'string', Rule::in(['open trip', 'user'])],
+                'password' => ['required', 'string', 'min:8', new Password],
+                'file' => ['nullable','file', 'mimes:pdf'],
+            ]);
+
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+
+            if ($request->input("role") == 'open trip') {
+                if (!$request->hasFile("file")) {
+                    return ResponseFormatter::error([
+                        'message' => 'Bad Request',
+                        'errors' => "field file required"
+                    ], 'Bad Request', 400);
+                }
+            }
+
+            $otp = $this->generateOtpCode();
+
+            try {
+                // Send OTP code to user's email
+                Mail::to($request->email)->send(new OtpMail($otp));
+            } catch (\Exception $error) {
+                // Rollback the transaction if there is an error sending the email
+                DB::rollback();
+                return ResponseFormatter::error([
+                    "message" => "something erorr",
+                    "errors" => $error->getMessage()
+                ], 'something error', 500);
+            }
+            
+            if ($request->hasFile("file")) {
+                $file = $request->file('file');
+                $file_name = $request->input('email') . Carbon::now() . '.' . $file->getClientOriginalExtension();
+                $file->move('file', $file_name);
+
+                User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'otp_code' => $otp,
+                    'role' => $request->role,
+                    'file' => $file_name
+                ]);
+            }else{
+                User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'otp_code' => $otp,
+                    'role' => $request->role,
+                ]);
+            }
+
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
+            $user = User::where('email', $request->email)->first();
+            $token = $user->createToken('authToken')->plainTextToken;
+
+            return ResponseFormatter::success([
+                'access_token' => $token,
+                'token_type' => "Bearer",
+                'user' => $user
+            ], "user registered");
+        } catch (Exception $error) {
+            // Rollback the transaction if there is an error
+            DB::rollback();
+            return ResponseFormatter::error([
+                "message" => " something error",
+                "errors" => $error->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+
+    public function verify(Request $request)
+    {
+        try {
+            // Start the database transaction
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'otp_code' => ['required', 'numeric'],
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors(),
+                    'user' => Auth::user()->email,
+                ], 'Bad Request', 400);
+            }
+
+            $user = Auth::user();
+
+            if ($request->otp_code != $user->otp_code) {
+                // Rollback the transaction if OTP code is wrong
+                DB::rollback();
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => "OTP code is wrong!"
+                ], 'Bad Request', 400);
+            }
+
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
+            return ResponseFormatter::success([
+                'user' => $user
+            ], "user verified");
+        } catch (Exception $error) {
+            // Rollback the transaction if there is an error
+            DB::rollback();
+            return ResponseFormatter::error([
+                "message" => "something error",
+                "errors" => $error->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => ['required_without_all:username,phone_number', 'string', 'email'],
+                'password' => ['required', 'string'],
+
+            ], [
+                'email.required_without_all' => 'The email field must be filled when the username or telephone number does not exist.',
+                'password.required' => 'Password field is required',
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+
+
+            $email = $request->input('email');
+            $password = $request->input('password');
+
+            $user = User::where('email', $email)->first();
+
+            if (!empty($email)) {
+                if (!$user) {
+                    return ResponseFormatter::error([
+                        'message' => 'User not found',
+                        'errors' => 'Email Unregistered'
+                    ], 'Authentication failed', 404);
+                }
+            }
+
+            if ($user->email_verified_at == null) {
+                return ResponseFormatter::error([
+                    'message' => 'Oops! Your email has not been verified',
+                    'errors' => 'Oops! Your email has not been verified'
+                ], 'Authentication failed', 400);
+            }
+
+            if (!Hash::check($password, $user->password)) {
+                return ResponseFormatter::error([
+                    'message' => 'Oops! The password you entered is incorrect.',
+                    'errors' => 'Oops! The password you entered is incorrect.'
+                ], 'Authentication failed', 401);
+            }
+
+            $token = $user->createToken('authToken')->plainTextToken;
+
+            return ResponseFormatter::success([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user,
+            ], "Congratulations, you have successfully logged in!");
+        } catch (Exception $error) {
+            return ResponseFormatter::error([
+                "message" => "Something error",
+                "errors" => $error
+            ], 'Authentication failed', 500);
+        }
+    }
+
+    public function getAllUsers()
+    {
+        try {
+            $user = User::get();
+
+            return ResponseFormatter::success([
+                'user' => $user
+            ], "success get users");
+
+        } catch (\Exception $e) {
+            return ResponseFormatter::error([
+                "message" => " something error",
+                "errors" => $e->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+
+}

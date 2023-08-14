@@ -1,0 +1,2582 @@
+openapi: 3.0.0
+info:
+  title: TRIP US API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  example: xxx123123
+                role:
+                  type: string
+                  enum: [open trip, user]
+                  example: user
+                file:
+                  type: string
+                  description: The name of the file (optional, PDF format only)
+                  example: my_resume.pdf
+      responses:
+        '200':
+          description: User registered role open trip
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: success
+                      message:
+                        type: string
+                        example: User registered successfully
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: 44|A4q2xnNEGXDbgXvnVwZCe57k30ZhDQQrtR4DZcJ7
+                      token_type:
+                        type: string
+                        example: Bearer
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 33
+                          name:
+                            type: string
+                            example: John Doe
+                          username:
+                            type: string
+                            example: null
+                          email:
+                            type: string
+                            format: email
+                            example: john.doe@example.com
+                          email_verified_at:
+                            type: string
+                            format: date-time
+                            example: null
+                          birthdate:
+                            type: string
+                            format: date
+                            example: null
+                          bio:
+                            type: string
+                            example: null
+                          links:
+                            type: string
+                            example: null
+                          phone_number:
+                            type: string
+                            example: null
+                          otp_code:
+                            type: string
+                            example: 6399
+                          two_factor_confirmed_at:
+                            type: string
+                            format: date-time
+                            example: null
+                          current_team_id:
+                            type: integer
+                            example: null
+                          profile_photo_path:
+                            type: string
+                            example: images/picture1.jpg
+                          created_at:
+                            type: string
+                            format: date-time
+                            example: 2023-08-02T12:08:08.000000Z
+                          updated_at:
+                            type: string
+                            format: date-time
+                            example: 2023-08-02T12:08:08.000000Z
+                          role:
+                            type: string
+                            example: open trip
+                          file:
+                            type: string
+                            example: baihaqicool329@gmail.com2023-08-02 12:08:08.pdf
+                          profile_photo_url:
+                            type: string
+                            example: https://ui-avatars.com/api/?name=j&color=7F9CF5&background=EBF4FF
+        '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    meta:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          example: 400
+                        status:
+                          type: string
+                          example: error
+                        message:
+                          type: string
+                          example: Bad Request
+                    data:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: Bad Request
+                        errors:
+                          type: string
+                          example: Some error message here
+  /login:
+    post:
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "baihaqicool329@gmail.com"
+                password:
+                  type: string
+                  example: "xxx123123"
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                      token_type:
+                        type: string
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          username:
+                            type: string
+                          email:
+                            type: string
+                            format: email
+                          email_verified_at:
+                            type: string
+                            format: date-time
+                          birthdate:
+                            type: string
+                            format: date
+                          bio:
+                            type: string
+                          links:
+                            type: string
+                          phone_number:
+                            type: string
+                          otp_code:
+                            type: string
+                          two_factor_confirmed_at:
+                            type: string
+                            format: date-time
+                          current_team_id:
+                            type: integer
+                          profile_photo_path:
+                            type: string
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                          role:
+                            type: string
+                          file:
+                            type: string
+                          profile_photo_url:
+                            type: string
+                example:
+                  meta:
+                    code: 200
+                    status: "success"
+                    message: "User logged in successfully"
+                  data:
+                    access_token: "44|A4q2xnNEGXDbgXvnVwZCe57k30ZhDQQrtR4DZcJ7"
+                    token_type: "Bearer"
+                    user:
+                      id: 33
+                      name: "john"
+                      username: null
+                      email: "baihaqicool329@gmail.com"
+                      email_verified_at: null
+                      birthdate: null
+                      bio: null
+                      links: null
+                      phone_number: null
+                      otp_code: "6399"
+                      two_factor_confirmed_at: null
+                      current_team_id: null
+                      profile_photo_path: null
+                      created_at: "2023-08-02T12:08:08.000000Z"
+                      updated_at: "2023-08-02T12:08:08.000000Z"
+                      role: "open trip"
+                      file: "baihaqicool329@gmail.com2023-08-02 12:08:08.pdf"
+                      profile_photo_url: "https://ui-avatars.com/api/?name=j&color=7F9CF5&background=EBF4FF"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+                example:
+                  meta:
+                    code: 400
+                    status: "error"
+                    message: "Bad Request"
+                  data:
+                    message: "Bad Request"
+                    errors: "password wrong"
+        '404':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+                example:
+                  meta:
+                    code: 404
+                    status: "error"
+                    message: "not found"
+                  data:
+                    message: "email not found"
+                    errors: "password wrong"
+  /verify:
+    post:
+      summary: Verify user with OTP code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp_code:
+                  type: string
+            examples:
+              example-1:
+                value:
+                  otp_code: "1234"
+              example-2:
+                value:
+                  otp_code: "2345"
+      responses:
+        '200':
+          description: User verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          username:
+                            type: string
+                          email:
+                            type: string
+                            format: email
+                          email_verified_at:
+                            type: string
+                            format: date-time
+                          birthdate:
+                            type: string
+                            format: date
+                          bio:
+                            type: string
+                          links:
+                            type: string
+                          phone_number:
+                            type: string
+                          otp_code:
+                            type: string
+                          two_factor_confirmed_at:
+                            type: string
+                            format: date-time
+                          current_team_id:
+                            type: integer
+                          profile_photo_path:
+                            type: string
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                          role:
+                            type: string
+                          file:
+                            type: string
+                          profile_photo_url:
+                            type: string
+              examples:
+                example-1:
+                  value:
+                    meta:
+                      code: 200
+                      status: "success"
+                      message: "User verified successfully"
+                    data:
+                      user:
+                        id: 123
+                        name: "John Doe"
+                        email: "johndoe@example.com"
+                        email_verified_at: "2023-08-03T12:00:00Z"
+                        birthdate: "1990-01-01"
+                        bio: "Lorem ipsum dolor sit amet."
+                        links: "https://example.com"
+                        phone_number: "+1234567890"
+                        otp_code: "123456"
+                        two_factor_confirmed_at: "2023-08-03T12:00:00Z"
+                        current_team_id: 1
+                        profile_photo_path: "profile.jpg"
+                        created_at: "2023-08-01T12:00:00Z"
+                        updated_at: "2023-08-03T12:00:00Z"
+                        role: "user"
+                        file: "file.pdf"
+                        profile_photo_url: "https://example.com/profile.jpg"
+                example-2:
+                  value:
+                    meta:
+                      code: 200
+                      status: "success"
+                      message: "User verified successfully"
+                    data:
+                      user:
+                        id: 456
+                        name: "Jane Smith"
+                        email: "janesmith@example.com"
+                        email_verified_at: "2023-08-03T12:00:00Z"
+                        birthdate: "1985-05-10"
+                        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                        links: "https://example.com"
+                        phone_number: "+9876543210"
+                        otp_code: "789012"
+                        two_factor_confirmed_at: "2023-08-03T12:00:00Z"
+                        current_team_id: 2
+                        profile_photo_path: "profile.jpg"
+                        created_at: "2023-08-02T12:00:00Z"
+                        updated_at: "2023-08-03T12:00:00Z"
+                        role: "user"
+                        file: "file.pdf"
+                        profile_photo_url: "https://example.com/profile.jpg"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+              examples:
+                example-1:
+                  value:
+                    meta:
+                      code: 400
+                      status: "error"
+                      message: "Bad Request"
+                    data:
+                      message: "OTP code is wrong!"
+                example-2:
+                  value:
+                    meta:
+                      code: 400
+                      status: "error"
+                      message: "Bad Request"
+                    data:
+                      message: "Invalid OTP code format"
+                      errors: "The OTP code should be a six-digit number"
+      security:
+        - BearerAuth: []
+  /feeds/create:
+    post:
+      summary: Create new feeds
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                location:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                  example: ["picture1", "picture2"]
+      responses:
+        '200':
+          description: Feeds created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        user_id:
+                          type: integer
+                        description:
+                          type: string
+                        location:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+                        feed_image:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              feed_id:
+                                type: integer
+                              image_url:
+                                type: string
+                              created_at:
+                                type: string
+                                format: date-time
+                              updated_at:
+                                type: string
+                                format: date-time
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+      security:
+        - BearerAuth: []
+  /feeds/likes:
+    post:
+      summary: Like a feed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feed_id:
+                  type: integer
+                  example: 41
+      responses:
+        '200':
+          description: Feed liked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      feed:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          feed_id:
+                            type: integer
+                          user_id:
+                            type: integer
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+      security:
+        - BearerAuth: []
+        
+    get:
+      summary: Get all feeds likes
+      responses:
+        '200':
+          description: Success response containing all feeds likes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            feed_id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            feed:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                user_id:
+                                  type: integer
+                                description:
+                                  type: string
+                                location:
+                                  type: string
+                                created_at:
+                                  type: string
+                                  format: date-time
+                                updated_at:
+                                  type: string
+                                  format: date-time
+                                feed_image:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: integer
+                                      feed_id:
+                                        type: integer
+                                      image_url:
+                                        type: string
+                                      created_at:
+                                        type: string
+                                        format: date-time
+                                      updated_at:
+                                        type: string
+                                        format: date-time
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+      security:
+        - BearerAuth: []
+  /feeds/saves:
+    post:
+      summary: Save a feed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feed_id:
+                  type: integer
+                  example: 41
+      responses:
+        '200':
+          description: Feed saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      feed:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          feed_id:
+                            type: integer
+                          user_id:
+                            type: integer
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+      security:
+        - BearerAuth: []
+    get:
+      summary: Get all feeds saves
+      responses:
+        '200':
+          description: Success response containing all feeds likes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            feed_id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            feed:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                user_id:
+                                  type: integer
+                                description:
+                                  type: string
+                                location:
+                                  type: string
+                                created_at:
+                                  type: string
+                                  format: date-time
+                                updated_at:
+                                  type: string
+                                  format: date-time
+                                feed_image:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: integer
+                                      feed_id:
+                                        type: integer
+                                      image_url:
+                                        type: string
+                                      created_at:
+                                        type: string
+                                        format: date-time
+                                      updated_at:
+                                        type: string
+                                        format: date-time
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+      security:
+        - BearerAuth: []
+  /feeds:
+    get:
+      summary: Get all feeds
+      responses:
+        '200':
+          description: All feeds retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            feed_image:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  feed_id:
+                                    type: integer
+                                  image_url:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+  /feeds/delete:
+    delete:
+      summary: Delete a feed by feed ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feed_id:
+                  type: integer
+      responses:
+        '200':
+          description: Feed deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+        '500':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      errors:
+                        type: string
+      security:
+        - BearerAuth: []
+  /feeds/likes/delete:
+    delete:
+      summary: Delete a feed like
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                  example: 28
+      responses:
+        '200':
+          description: Feed deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: success
+                      message:
+                        type: string
+                        example: feed like deleted successfully
+                  data:
+                    type: null
+        '404':
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 404
+                      status:
+                        type: string
+                        example: error not found
+                      message:
+                        type: string
+                        example: error not found
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Bad Request
+                      errors:
+                        type: string
+                        example: error not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 500
+                      status:
+                        type: string
+                        example: Internal Server Error
+                      message:
+                        type: string
+                        example: Bad Request
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Something error
+  /feeds/saves/delete:
+    delete:
+      summary: Delete a feed save
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feed_id:
+                  type: integer
+                  example: 28
+      responses:
+        '200':
+          description: Feed deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: success
+                      message:
+                        type: string
+                        example: trip save deleted successfully
+                  data:
+                    type: null
+        '404':
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 404
+                      status:
+                        type: string
+                        example: error not found
+                      message:
+                        type: string
+                        example: error not found
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Bad Request
+                      errors:
+                        type: string
+                        example: error not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 500
+                      status:
+                        type: string
+                        example: Internal Server Error
+                      message:
+                        type: string
+                        example: Bad Request
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Something error
+  /trips/create:
+    post:
+      summary: Create new trips
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: "lorem ipsum"
+                location:
+                  type: string
+                  example: "Jakarta"
+                fee:
+                  type: integer
+                  example: 200000
+                limit:
+                  type: integer
+                  example: 10
+                date_from:
+                  type: string
+                  format: date-time
+                  example: "2023-12-27 09:00"
+                date_end:
+                  type: string
+                  format: date-time
+                  example: "2023-12-31 09:00"
+                transportation:
+                  type: string
+                  example: "no"
+                guide:
+                  type: string
+                  example: "yes"
+                porter:
+                  type: string
+                  example: "yes"
+                eat:
+                  type: string
+                  example: "yes"
+                breakfast:
+                  type: string
+                  example: "yes"
+                lunch:
+                  type: string
+                  example: "yes"
+                permit:
+                  type: string
+                  example: "yes"
+                others:
+                  type: string
+                  example: "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"
+                exclude:
+                  type: string
+                  example: "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum"
+                images:
+                  type: array
+                  items:
+                    type: string
+                  example: ["image1.jpg", "image2.jpg"]
+                category_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 2]
+                payment_account:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      number:
+                        type: string
+                        example: "123123123"
+                      payment_method_id:
+                        type: integer
+                        example: 1
+      responses:
+        '200':
+          description: Trips created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user_id:
+                          type: integer
+                        description:
+                          type: string
+                        location:
+                          type: string
+                        fee:
+                          type: integer
+                        limit:
+                          type: integer
+                        date_from:
+                          type: string
+                          format: date-time
+                        date_end:
+                          type: string
+                          format: date-time
+                        transportation:
+                          type: string
+                        guide:
+                          type: string
+                        porter:
+                          type: string
+                        eat:
+                          type: string
+                        breakfast:
+                          type: string
+                        lunch:
+                          type: string
+                        permit:
+                          type: string
+                        others:
+                          type: string
+                        exclude:
+                          type: string
+                        updated_at:
+                          type: string
+                          format: date-time
+                        created_at:
+                          type: string
+                          format: date-time
+                        id:
+                          type: integer
+                        trips_images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              trip_id:
+                                type: integer
+                              image_url:
+                                type: string
+                              created_at:
+                                type: string
+                                format: date-time
+                              updated_at:
+                                type: string
+                                format: date-time
+                        trips_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              trip_id:
+                                type: integer
+                              category_id:
+                                type: integer
+                              created_at:
+                                type: string
+                                format: date-time
+                              updated_at:
+                                type: string
+                                format: date-time
+                        payment_accounts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              trip_id:
+                                type: integer
+                              payment_method_id:
+                                type: integer
+                              number:
+                                type: string
+                              created_at:
+                                type: string
+                                format: date-time
+                              updated_at:
+                                type: string
+                                format: date-time
+        '400':
+          description: Not Found response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponse'
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+      security:
+        - BearerAuth: []
+  /trips/likes:
+    post:
+      summary: Like a trip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                  example: 282
+      responses:
+        '200':
+          description: Trip liked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+        '404':
+          description: Not Found response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponse'
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+      security:
+        - BearerAuth: []
+    get:
+      summary: Get list of trips Likes
+      responses:
+        '200':
+          description: List of trips retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      trips:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            fee:
+                              type: integer
+                            limit:
+                              type: integer
+                            date_from:
+                              type: string
+                              format: date-time
+                            date_end:
+                              type: string
+                              format: date-time
+                            transportation:
+                              type: string
+                            guide:
+                              type: string
+                            porter:
+                              type: string
+                            eat:
+                              type: string
+                            breakfast:
+                              type: string
+                            lunch:
+                              type: string
+                            permit:
+                              type: string
+                            others:
+                              type: string
+                            exclude:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            trips_images:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  image_url:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            trips_categories:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  category_id:
+                                    type: integer
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            payment_accounts:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  payment_method_id:
+                                    type: integer
+                                  number:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            trips_joins:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  user_id:
+                                    type: integer
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+      security:
+            - BearerAuth: []
+  /trips/saves:
+    post:
+      summary: Like a trip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                  example: 282
+      responses:
+        '200':
+          description: Trip liked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+        '404':
+          description: Not Found response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponse'
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  
+      security:
+        - BearerAuth: []
+    get:
+      summary: Get list of trips Saves
+      responses:
+        '200':
+          description: List of trips retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      trips:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            fee:
+                              type: integer
+                            limit:
+                              type: integer
+                            date_from:
+                              type: string
+                              format: date-time
+                            date_end:
+                              type: string
+                              format: date-time
+                            transportation:
+                              type: string
+                            guide:
+                              type: string
+                            porter:
+                              type: string
+                            eat:
+                              type: string
+                            breakfast:
+                              type: string
+                            lunch:
+                              type: string
+                            permit:
+                              type: string
+                            others:
+                              type: string
+                            exclude:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            trips_images:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  image_url:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            trips_categories:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  category_id:
+                                    type: integer
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            payment_accounts:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  payment_method_id:
+                                    type: integer
+                                  number:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            trips_joins:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  user_id:
+                                    type: integer
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  
+      security:
+            - BearerAuth: []
+  /trips:
+    get:
+      summary: Get list of trips
+      responses:
+        '200':
+          description: List of trips retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      status:
+                        type: string
+                      message:
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      trips:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            user_id:
+                              type: integer
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            fee:
+                              type: integer
+                            limit:
+                              type: integer
+                            date_from:
+                              type: string
+                              format: date-time
+                            date_end:
+                              type: string
+                              format: date-time
+                            transportation:
+                              type: string
+                            guide:
+                              type: string
+                            porter:
+                              type: string
+                            eat:
+                              type: string
+                            breakfast:
+                              type: string
+                            lunch:
+                              type: string
+                            permit:
+                              type: string
+                            others:
+                              type: string
+                            exclude:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+                            updated_at:
+                              type: string
+                              format: date-time
+                            trips_images:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  image_url:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            trips_categories:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  category_id:
+                                    type: integer
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            payment_accounts:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  payment_method_id:
+                                    type: integer
+                                  number:
+                                    type: string
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+                            trips_joins:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  trip_id:
+                                    type: integer
+                                  user_id:
+                                    type: integer
+                                  created_at:
+                                    type: string
+                                    format: date-time
+                                  updated_at:
+                                    type: string
+                                    format: date-time
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  
+  /trips/update:
+    post:
+      summary: update trip
+      description: Endpoint to update trip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTrip'
+      responses:
+        '200':
+          description: Success response with trip data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponse'
+        '400':
+          description: Bad Request response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '404':
+          description: Not Found response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponse'
+        '500':
+          description: Internal Server Error response with error message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  /trips/delete:
+    delete:
+      summary: Delete a trip
+      operationId: deleteTrip
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                  example: 28
+      responses:
+        '200':
+          description: Trip deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: success
+                      message:
+                        type: string
+                        example: trip deleted successfully
+                  data:
+                    type: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 400
+                      status:
+                        type: string
+                        example: error
+                      message:
+                        type: string
+                        example: no images
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: something error
+                      errors:
+                        type: string
+                        example: image must be fill
+        '404':
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 404
+                      status:
+                        type: string
+                        example: error not found
+                      message:
+                        type: string
+                        example: error not found
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Bad Request
+                      errors:
+                        type: string
+                        example: error not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 500
+                      status:
+                        type: string
+                        example: Internal Server Error
+                      message:
+                        type: string
+                        example: Bad Request
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Something error
+  /trips/likes/delete:
+    delete:
+      summary: Delete a trip like
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                  example: 28
+      responses:
+        '200':
+          description: Trip deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: success
+                      message:
+                        type: string
+                        example: trip like deleted successfully
+                  data:
+                    type: null
+        '404':
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 404
+                      status:
+                        type: string
+                        example: error not found
+                      message:
+                        type: string
+                        example: error not found
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Bad Request
+                      errors:
+                        type: string
+                        example: error not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 500
+                      status:
+                        type: string
+                        example: Internal Server Error
+                      message:
+                        type: string
+                        example: Bad Request
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Something error
+  /trips/saves/delete:
+    delete:
+      summary: Delete a trip save
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                  example: 28
+      responses:
+        '200':
+          description: Trip deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: success
+                      message:
+                        type: string
+                        example: trip save deleted successfully
+                  data:
+                    type: null
+        '404':
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 404
+                      status:
+                        type: string
+                        example: error not found
+                      message:
+                        type: string
+                        example: error not found
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Bad Request
+                      errors:
+                        type: string
+                        example: error not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 500
+                      status:
+                        type: string
+                        example: Internal Server Error
+                      message:
+                        type: string
+                        example: Bad Request
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Something error
+  
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    NewTrip:
+      type: object
+      properties:
+        trip_id:
+          type: integer
+        description:
+          type: string
+        location:
+          type: string
+        fee:
+          type: integer
+        limit:
+          type: integer
+        date_from:
+          type: string
+          format: date-time
+        date_end:
+          type: string
+          format: date-time
+        transportation:
+          type: string
+        guide:
+          type: string
+        porter:
+          type: string
+        eat:
+          type: string
+        breakfast:
+          type: string
+        lunch:
+          type: string
+        permit:
+          type: string
+        others:
+          type: string
+        exclude:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        category_id:
+          type: array
+          items:
+            type: integer
+        payment_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentAccount'
+      required:
+        - description
+        - location
+        - fee
+        - limit
+        - date_from
+        - date_end
+        - images
+    PaymentAccount:
+      type: object
+      properties:
+        number:
+          type: string
+        payment_method_id:
+          type: integer
+      required:
+        - number
+        - payment_method_id
+    TripResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trip'
+    Trip:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        description:
+          type: string
+        location:
+          type: string
+        fee:
+          type: string
+        limit:
+          type: string
+        date_from:
+          type: string
+        date_end:
+          type: string
+        transportation:
+          type: string
+        guide:
+          type: string
+        porter:
+          type: string
+        eat:
+          type: string
+        breakfast:
+          type: string
+        lunch:
+          type: string
+        permit:
+          type: string
+        others:
+          type: string
+        exclude:
+          type: string
+        updated_at:
+          type: string
+        created_at:
+          type: string
+        id:
+          type: integer
+        trips_images:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripImage'
+        trips_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripCategory'
+        payment_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentAccount'
+    TripImage:
+      type: object
+      properties:
+        id:
+          type: integer
+        trip_id:
+          type: integer
+        image_url:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    TripCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+        trip_id:
+          type: integer
+        category_id:
+          type: integer
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    Meta:
+      type: object
+      properties:
+        code:
+          type: integer
+        status:
+          type: string
+        message:
+          type: string
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+            errors:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+    NotFoundErrorResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+            errors:
+              type: string
+    InternalServerErrorResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+            errors:
+              type: string
