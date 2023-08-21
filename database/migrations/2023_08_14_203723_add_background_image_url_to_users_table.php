@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_method', function (Blueprint $table) {
-            $table->string('id');
-            $table->string('name');
-            $table->string('location');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('background_image_url')->nullable()->after('profile_photo_path');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_method');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

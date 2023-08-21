@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\FeedsController;
 use App\Http\Controllers\API\HomeController;
+use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\TripsController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -44,6 +45,14 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/trips/delete', [TripsController::class, 'delete']);
     Route::delete('/trips/likes/delete', [TripsController::class, 'deleteLike']);
     Route::delete('/trips/saves/delete', [TripsController::class, 'deleteSave']);
+
+    Route::post('/users/update', [UserController::class, 'update']);
+    Route::post('/users/change-password', [UserController::class, 'changePassword']);
+
+    Route::post('/payment/create', [PaymentController::class, 'create']);
+    Route::delete('/payment/delete/{payment_account_id}', [PaymentController::class, 'delete']);
+
+    Route::get('/logout', [UserController::class, 'logout']);
 });
 
 
@@ -54,4 +63,5 @@ Route::get('/users', [UserController::class, 'getAllUsers']);
 
 Route::get('/feeds', [FeedsController::class, 'getAll']);
 Route::get('/trips', [TripsController::class, 'getAll']);
+Route::get('/payment-account', [PaymentController::class, 'getAll']);
 

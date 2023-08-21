@@ -9,12 +9,14 @@ use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use Exception;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Laravel\Fortify\Rules\Password;
 use App\Mail\OtpMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\UploadedFile;
 
@@ -122,6 +124,12 @@ class UserController extends Controller
                 "errors" => $error->getMessage()
             ], 'authentication failed', 500);
         }
+    }
+
+    public function logout(Request $request)
+    {
+        $token = $request->user()->currentAccessToken()->delete();
+        return ResponseFormatter::success($token, "token revoked");
     }
 
     public function verify(Request $request)
@@ -252,4 +260,121 @@ class UserController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $validator = Validator::make($request->all(), [
+                'name' => [],
+                'links' => [],
+                'bio' => [],
+                'phone' => [],
+                'birthdate' => ['date'],
+                'email' => ['email', 'unique:users,email,'.$user->id],
+                'background_image_url' => ['image'],
+                'profile_photo_path' => ['image'],
+            ]);
+        
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+        
+            // Update user fields
+            $user->name = $request->input('name', $user->name); // Use current value if not provided
+            $user->links = $request->input('links', $user->links);
+            $user->bio = $request->input('bio', $user->bio);
+            $user->phone_number = $request->input('phone', $user->phone);
+            $user->birthdate = $request->input('birthdate', $user->birthdate);
+            $user->email = $request->input('email', $user->email);
+        
+            if ($request->hasFile('profile_photo_path')) {
+                $file_name_profile = $user->id . $user->email . Str::random(3) . '.' . $request->file('profile_photo_path')->getClientOriginalExtension();
+                $storage_path = $user->profile_photo_path;
+                $full_storage_path = public_path($storage_path);
+            
+                // Delete old profile photo if exists
+                if (File::exists($full_storage_path)) {
+                    File::delete($full_storage_path);
+                }
+                
+                // Move and update the photo path in the user model
+                $request->file('profile_photo_path')->move('images/profile', $file_name_profile);
+                $user->profile_photo_path = 'images/profile/' . $file_name_profile;
+            }
+            
+            if ($request->hasFile('background_image_url')) {
+                $file_name = $user->id . $user->email . '.' . $request->file('background_image_url')->getClientOriginalExtension();
+                $storage_path = 'images/background/' . $file_name;
+                $full_storage_path = public_path($storage_path);
+            
+                // Delete old background image if exists
+                if (File::exists($full_storage_path)) {
+                    File::delete($full_storage_path);
+                }
+            
+                // Move and update the image path in the user model
+                $request->file('background_image_url')->move('images/background', $file_name);
+                $user->background_image_url = $storage_path;
+            }
+        
+            $user->save(); // Save the updated user model
+        
+            return ResponseFormatter::success([
+                'message' => 'Profile updated successfully',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return ResponseFormatter::error([
+                'message' => 'something error',
+                'errors' => $e->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $validator = Validator::make($request->all(), [
+                'new_password' => ['required', 'string', 'min:8'],
+                'old_password' => ['required', 'string'],
+            ]);
+        
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+            
+            // dd(Hash::check($request->old_password, $user->password));
+
+            if (!Hash::check($request->old_password, $user->password)){
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => 'old password is wrong!'
+                ], 'Bad Request', 400);
+            }
+        
+            // Update user fields
+            $user->password = Hash::make($request->new_password);
+
+            $user->save(); // Save the updated user model
+        
+            return ResponseFormatter::success([
+                'message' => 'Password updated successfully',
+            ]);
+
+        } catch (\Exception $e) {
+            return ResponseFormatter::error([
+                'message' => 'something error',
+                'errors' => $e->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
 }

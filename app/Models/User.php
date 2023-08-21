@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Feeds\Feeds;
+use App\Models\Trips\PaymentAccount;
 use App\Models\Trips\Trips;
 use App\Models\Trips\TripsJoins;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -38,7 +39,8 @@ class User extends Authenticatable
         'otp_code',
         'password',
         'role',
-        'file'
+        'file',
+        'background_image_url',
     ];
 
     /**
@@ -79,5 +81,10 @@ class User extends Authenticatable
     public function trips()
     {
         return $this->hasMany(Trips::class, 'user_id', 'id');
+    }
+
+    public function paymentAccount()
+    {
+        return $this->hasMany(PaymentAccount::class, 'user_id', 'id');
     }
 }

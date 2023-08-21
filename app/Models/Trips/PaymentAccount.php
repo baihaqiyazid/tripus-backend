@@ -3,6 +3,7 @@
 namespace App\Models\Trips;
 
 use App\Models\Payment\PaymentMethod;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,13 +12,13 @@ class PaymentAccount extends Model
     use HasFactory;
     protected $fillable = [
         'payment_method_id',
-        'trip_id', 
+        'user_id', 
         'number'
     ];
 
-    public function trips()
+    public function user()
     {
-        return $this->belongsTo(Trips::class, 'id', 'trip_id');
+        return $this->belongsTo(User::class, 'id', 'user_id');
     }
 
     public function paymentMethod()

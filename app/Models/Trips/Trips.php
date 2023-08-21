@@ -54,11 +54,6 @@ class Trips extends Model
         return $this->hasMany(TripsCategories::class, 'trip_id', 'id');
     }
 
-    public function paymentAccounts()
-    {
-        return $this->hasMany(PaymentAccount::class, 'trip_id', 'id');
-    }
-
     public function tripsJoins()
     {
         return $this->hasMany(TripsJoins::class, 'trip_id', 'id');
