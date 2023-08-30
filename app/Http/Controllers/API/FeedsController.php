@@ -50,7 +50,8 @@ class FeedsController extends Controller
             $feed = Feeds::create([
                 'description' => $request->description,
                 'location' => $request->location,
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'type' => 'feed'
             ]);
 
             if ($request->hasFile('images')) {
@@ -98,6 +99,111 @@ class FeedsController extends Controller
             return ResponseFormatter::success([
                 $feed
             ], "create feeds success");
+        } catch (\Exception $e) {
+            // Rollback the transaction if there is an error
+            DB::rollback();
+            return ResponseFormatter::error([
+                'message' => 'something error',
+                'errors' => $e->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+    
+    public function createTrips(Request $request)
+    {
+        try {
+            // Start the database transaction
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'title' => ['required', 'max:50', 'string'],
+                'meeting_point' => ['required'],
+                'include' => ['required'],
+                'exclude' => [],
+                'others' => [],
+                'category_id' => ['required'],
+                'date_start' => ['required'],
+                'date_end' => [],
+                'fee' => ['required'],
+                'max_person' => ['required'],
+                'payment_account' => ['required'],
+                'description' => ['required'],
+                'images.*' => ['required', 'image' ,'max:20480'], // Menggunakan notasi wildcard untuk menerima multiple images
+                'location' => ['required'],
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+
+            $user = Auth::user();
+
+            if (!$request->hasFile('images')) {
+                return ResponseFormatter::error([
+                    'message' => 'something error',
+                    'errors' => "image must be fill"
+                ], 'no images', 400);
+            }
+
+            $feed = Feeds::create([
+                'description' => $request->description,
+                'location' => $request->location,
+                'user_id' => $user->id,
+                'meeting_point' => $request->meeting_point,
+                'title' => $request->title,
+                'include' => $request->include,
+                'exclude' => $request->exclude,
+                'others' => $request->others,
+                'category_id' => $request->category_id,
+                'date_start' => $request->date_start,
+                'date_end' => $request->date_end,
+                'fee' => $request->fee,
+                'max_person' => $request->max_person,
+                'payment_account' => $request->payment_account,
+                'type' => 'open trip'
+            ]);
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+
+                    $file_name = $user->id . $this->index . Carbon::now() . '.' . $image->getClientOriginalExtension();
+                    try {
+                        $storage_image = $image->move('images/trips', $file_name);
+                        FeedsImage::create([
+                            'feed_id' => $feed->id,
+                            'image_url' => "images/trips/" . $file_name
+                        ]);
+                    } catch (\Exception $e) {
+                        // Rollback the transaction if there is an error
+                        DB::rollback();
+                        return ResponseFormatter::error([
+                            'message' => 'something error',
+                            'errors' => $e->getMessage()
+                        ], 'authentication failed', 500);
+                    }
+                    $this->index++;
+                }
+            }
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
+            $feeds = $user->feeds;
+
+            foreach ($feeds as $feed) {
+                $feedImages = $feed->feedImage->map(function ($image) {
+                    return [
+                        'image_url' => $image->image_url,
+                    ];
+                });
+            }
+
+            return ResponseFormatter::success([
+                $feed
+            ], "create trips success");
         } catch (\Exception $e) {
             // Rollback the transaction if there is an error
             DB::rollback();

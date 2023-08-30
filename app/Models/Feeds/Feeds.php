@@ -2,6 +2,12 @@
 
 namespace App\Models\Feeds;
 
+use App\Models\approval_letters;
+use App\Models\cancel_trip;
+use App\Models\RequestApprovalLetters;
+use App\Models\RequestCancelTrips;
+use App\Models\RequestWithdrawTrips;
+use App\Models\Trips\TripsJoins;
 use Illuminate\Support\Carbon;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +26,18 @@ class Feeds extends Model
         'description',
         'location',
         'user_id',
+        'meeting_point',
+        'title',
+        'include',
+        'exclude',
+        'others',
+        'category_id',
+        'date_start',
+        'date_end',
+        'fee',
+        'max_person',
+        'payment_account',
+        'type'
     ];
 
     public function user()
@@ -40,5 +58,20 @@ class Feeds extends Model
     public function feedsSaves()
     {
         return $this->hasMany(FeedsSaves::class, 'feed_id', 'id');
+    }
+
+    public function feedsJoin()
+    {
+        return $this->hasMany(TripsJoins::class, 'feed_id', 'id');
+    }
+
+    public function cancelTrip()
+    {
+        return $this->hasMany(RequestCancelTrips::class, 'feed_id', 'id');
+    }
+
+    public function withdrawTrip()
+    {
+        return $this->hasMany(RequestWithdrawTrips::class, 'feed_id', 'id');
     }
 }

@@ -30,6 +30,7 @@ class HomeController extends Controller
                 $feed->user;
                 $feed->feedsLikes;
                 $feed->feedsSaves;
+                $feed->feedsJoin;
             }
 
             return ResponseFormatter::success([

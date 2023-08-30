@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\FeedsController;
 use App\Http\Controllers\API\HomeController;
+use App\Http\Controllers\API\orderController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\TripsController;
 use App\Models\User;
@@ -35,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/feeds/likes/delete/{feed_id}', [FeedsController::class, 'deleteLike']);
     Route::delete('/feeds/saves/delete/{feed_id}', [FeedsController::class, 'deleteSave']);
 
-    Route::post('/trips/create', [TripsController::class, 'create']);
+    Route::post('/trips/create', [FeedsController::class, 'createTrips']);
     Route::post('/trips/update', [TripsController::class, 'update']);
     Route::post('/trips/likes', [TripsController::class, 'createLike']);
     Route::post('/trips/saves', [TripsController::class, 'createSave']);
@@ -53,6 +54,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/payment/delete/{payment_account_id}', [PaymentController::class, 'delete']);
 
     Route::get('/logout', [UserController::class, 'logout']);
+
+    
+    Route::post('/order/charge', [orderController::class, 'charge']);
+    Route::get('/order/{order_id}/cancel', [orderController::class, 'cancel']);
 });
 
 
@@ -64,4 +69,6 @@ Route::get('/users', [UserController::class, 'getAllUsers']);
 Route::get('/feeds', [FeedsController::class, 'getAll']);
 Route::get('/trips', [TripsController::class, 'getAll']);
 Route::get('/payment-account', [PaymentController::class, 'getAll']);
+
+Route::post('/order/callback', [orderController::class, 'callback']);
 

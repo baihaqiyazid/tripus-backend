@@ -41,6 +41,7 @@ class User extends Authenticatable
         'role',
         'file',
         'background_image_url',
+        'status'
     ];
 
     /**

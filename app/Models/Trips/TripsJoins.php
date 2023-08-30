@@ -11,11 +11,11 @@ class TripsJoins extends Model
 
     protected $fillable = [
         'user_id',
-        'trip_id'
+        'feed_id'
     ];
 
-    public function trips()
+    public function feeds()
     {
-        return $this->belongsTo(Trips::class, 'trip_id', 'id');
+        return $this->belongsTo(Trips::class, 'feed_id', 'id');
     }
 }
