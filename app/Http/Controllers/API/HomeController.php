@@ -15,22 +15,17 @@ class HomeController extends Controller
     public function getData()
     {
         try {
-            $feeds = Feeds::latest()->get();
+             $feeds = Feeds::with(['user', 'feedImage', 'feedsLikes', 'feedsSaves', 'feedsJoin', 'cancelTrip', 'withdrawTrip'])->latest()->get();
             
             foreach ($feeds as $feed) {
-                $feed->created_at = $feed->created_at->toIso8601String();
-                $feed->updated_at = $feed->updated_at->toIso8601String();
+                $feed->created_at->toIso8601String();
+                $feed->updated_at->toIso8601String();
 
                 $feedImages = $feed->feedImage->map(function ($image) {
                     return [
                         'image_url' => $image->image_url,
                     ];
                 });
-
-                $feed->user;
-                $feed->feedsLikes;
-                $feed->feedsSaves;
-                $feed->feedsJoin;
             }
 
             return ResponseFormatter::success([

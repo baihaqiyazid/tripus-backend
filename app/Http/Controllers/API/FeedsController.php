@@ -11,6 +11,8 @@ use App\Models\Feeds\FeedsImage;
 use App\Models\Feeds\Feeds;
 use App\Models\Feeds\FeedsLikes;
 use App\Models\Feeds\FeedsSaves;
+use App\Models\RequestCancelTrips;
+use App\Models\RequestWithdrawTrips;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -203,6 +205,106 @@ class FeedsController extends Controller
 
             return ResponseFormatter::success([
                 $feed
+            ], "create trips success");
+        } catch (\Exception $e) {
+            // Rollback the transaction if there is an error
+            DB::rollback();
+            return ResponseFormatter::error([
+                'message' => 'something error',
+                'errors' => $e->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+    
+    public function requestCancelTrips(Request $request)
+    {
+        try {
+            // Start the database transaction
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'feed_id' => ['required'],
+                'file' => ['file'],
+                'reason' => ['required', 'string'],
+                'status' => ['required', 'string']
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+
+            $user = Auth::user();
+ 
+            if ($request->hasFile("file")) {
+                $file = $request->file('file');
+                $file_name = $user->email . Carbon::now() . '.' . $file->getClientOriginalExtension();
+                $file->move('file/req_cancel', $file_name);
+                
+                $requestCancelTrips = RequestCancelTrips::create([
+                    'feed_id' => $request->feed_id,
+                    'file' => $file_name,
+                    'reason' => $request->reason,
+                    'status' => $request->status
+                ]);
+            }
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
+            return ResponseFormatter::success([
+                $requestCancelTrips
+            ], "create trips success");
+        } catch (\Exception $e) {
+            // Rollback the transaction if there is an error
+            DB::rollback();
+            return ResponseFormatter::error([
+                'message' => 'something error',
+                'errors' => $e->getMessage()
+            ], 'authentication failed', 500);
+        }
+    }
+    
+    public function requestWithdrawTrips(Request $request)
+    {
+        try {
+            // Start the database transaction
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'feed_id' => ['required'],
+                'file' => ['required','file'],
+                'status' => ['required', 'string']
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Bad Request',
+                    'errors' => $validator->errors()
+                ], 'Bad Request', 400);
+            }
+
+            $user = Auth::user();
+ 
+            if ($request->hasFile("file")) {
+                $file = $request->file('file');
+                $file_name = $user->email . Carbon::now() . '.' . $file->getClientOriginalExtension();
+                $file->move('file/req_withdraw', $file_name);
+                
+                $requestWithdrawTrips = RequestWithdrawTrips::create([
+                    'feed_id' => $request->feed_id,
+                    'file' => $file_name,
+                    'status' => $request->status
+                ]);
+            }
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
+            return ResponseFormatter::success([
+                $requestWithdrawTrips
             ], "create trips success");
         } catch (\Exception $e) {
             // Rollback the transaction if there is an error
