@@ -58,6 +58,10 @@ Route::middleware('auth:sanctum')->group(function() {
     
     Route::post('/order/charge', [orderController::class, 'charge']);
     Route::get('/order/{order_id}/cancel', [orderController::class, 'cancel']);
+    Route::get('/orders', [orderController::class, 'getByUserId']);
+    
+    Route::post('/trips/cancel', [FeedsController::class, 'requestCancelTrips']);
+    Route::post('/trips/request-withdraw', [FeedsController::class, 'requestWithdrawTrips']);
 });
 
 
@@ -68,7 +72,7 @@ Route::get('/users', [UserController::class, 'getAllUsers']);
 
 Route::get('/feeds', [FeedsController::class, 'getAll']);
 Route::get('/trips', [TripsController::class, 'getAll']);
+Route::get('/orders/{email}', [orderController::class, 'getByEmail']);
 Route::get('/payment-account', [PaymentController::class, 'getAll']);
 
 Route::post('/order/callback', [orderController::class, 'callback']);
-

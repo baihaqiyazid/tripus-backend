@@ -32,8 +32,8 @@ Route::middleware([
              ->join('users', 'feeds.user_id', 'users.id')
              ->join('orders', 'feeds.id', 'orders.feed_id')
              ->where('orders.status', 'success')
-             ->groupBy('feeds.id', 'request_withdraw_trips.id')
-             ->get();
+             ->groupBy('feeds.id', 'request_withdraw_trips.id');
+        
 
         $feedsCancel = Feeds::select('feeds.*', 'request_cancel_trips.*', 'users.name as name', )
              ->join('request_cancel_trips', 'feeds.id', '=', 'request_cancel_trips.feed_id')
